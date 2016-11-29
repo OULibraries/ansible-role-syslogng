@@ -1,2 +1,9 @@
 ---
 # tasks file for ansible-role-syslogng
+
+- name: Install Syslog-ng
+  yum:
+    name: syslog-ng
+    state: present
+
+
