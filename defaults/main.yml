@@ -1,2 +1,6 @@
 ---
 # defaults file for ansible-role-syslogng
+
+# Location of syslogng certs
+syslogng_cert_path: '/etc/pki/tls/certs/'
+syslogng_key_path: '/etc/pki/tls/private/'
