@@ -13,3 +13,4 @@
     mode: 0644
     owner: root
     group: wheel
+  notify: Enable syslog-ng
