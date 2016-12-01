@@ -3,10 +3,6 @@
   file: path="{{ syslogng_cert_path }}/star.{{ syslogng_dn_suffix }}" state=directory
 - name: Ensure ssl key directory exists
   file: path="{{ syslogng_key_path }}/star.{{ syslogng_dn_suffix }}" state=directory
-- name: Ensure Apache is stopped
-  service:
-    name: httpd
-    state: stopped
 - name: Generate a self-signed cert.
   sudo: yes
   command: >
