@@ -4,4 +4,5 @@
 - include: syslogng.yml
   sudo: yes
 
+- include: ssl-selfsign.yml
 
