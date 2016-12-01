@@ -1,13 +1,16 @@
 ---
 - name: Ensure ssl cert directory exists
   file: path="{{ syslogng_cert_path }}/star.{{ syslogng_dn_suffix }}" state=directory
+
 - name: Ensure ssl key directory exists
   file: path="{{ syslogng_key_path }}/star.{{ syslogng_dn_suffix }}" state=directory
+
 - name: Generate a self-signed cert.
   sudo: yes
   command: >
-     openssl req -newkey rsa:2048 -nodes -sha256 -x509 -subj "/C=US/ST=Oklahoma/L=Norman/O=University of Oklahoma/OU=Library Technology Platforms/CN=*.{{ syslogng_dn_suffix }}" -days 90 -keyout "{{ syslogng_key_path }}"/star."{{ syslogng_dn_suffix }}"/privkey.pem -out "{{ syslogng_cert_path }}"/star."{{ syslogng_dn_suffix }}"/cert.pem 
+     openssl req -newkey rsa:2048 -nodes -sha256 -x509 -subj "/C=US/ST=Oklahoma/L=Norman/O=University of Oklahoma/OU=Library Technology Platforms/CN={{ syslogng_dn_prefix }}.{{ syslogng_dn_suffix }}" -days 90 -keyout "{{ syslogng_key_path }}"/star."{{ syslogng_dn_suffix }}"/{{ syslogng_dn_prefix }}_privkey.pem -out "{{ syslogng_cert_path }}"/star."{{ syslogng_dn_suffix }}"/{{ syslogng_dn_prefix }}_cert.pem 
+
 - name: Create a dummy chain file
   sudo: yes
   shell: >
-    echo \# > "{{ syslogng_cert_path }}/star.{{ syslogng_dn_suffix }}/chain.pem"
+    echo \# > "{{ syslogng_cert_path }}/star.{{ syslogng_dn_suffix }}/{{ syslogng_dn_prefix }}_chain.pem"
