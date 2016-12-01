@@ -17,11 +17,11 @@ flush_lines (0);
 time_reopen (10);
 log_fifo_size (1000);
 chain_hostnames (off);
-use_dns (no);
+use_dns (persist-only);
 use_fqdn (no);
 create_dirs (no);
 dns-cache-hosts (/etc/hosts);
-keep_hostname (yes);
+keep_hostname (no);
 time-zone ("America/Chicago");
 };
 
