@@ -26,7 +26,7 @@ source s_net {
   port(514)
   transport("tls")
   tls(key-file("/etc/pki/tls/private/{{ syslogng_dn_prefix }}.{{syslogng_dn_suffix }}/{{ syslogng_dn_prefix }}_privkey.pem")
-  cert-file("/etc/pki/tls/certs/{{ syslogng_dn_prefix }}.{{ syslogng_dn_suffix }}/{{ syslog_dn_prefix }}_cert.pem")
+  cert-file("/etc/pki/tls/certs/{{ syslogng_dn_prefix }}.{{ syslogng_dn_suffix }}/{{ syslogng_dn_prefix }}_cert.pem")
   peer-verify(optional-untrusted)));
 };
 
