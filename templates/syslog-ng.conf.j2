@@ -1,39 +1,33 @@
 @version:3.5
 @include "scl.conf"
 
-# syslog-ng configuration file.
-#
-# This should behave pretty much like the original syslog on RedHat. But
-# it could be configured a lot smarter.
-#
-# See syslog-ng(8) and syslog-ng.conf(5) for more information.
-#
-# Note: it also sources additional configuration files (*.conf)
-# located in /etc/syslog-ng/conf.d/
-
 # Define Global Options
 options {
-flush_lines (0);
-time_reopen (10);
-log_fifo_size (1000);
-chain_hostnames (off);
-use_dns (persist-only);
-use_fqdn (no);
-create_dirs (no);
-dns-cache-hosts (/etc/hosts);
-keep_hostname (no);
-time-zone ("America/Chicago");
+  flush_lines (0);
+  time_reopen (10);
+  log_fifo_size (1000);
+  chain_hostnames (off);
+  use_dns (persist-only);
+  use_fqdn (no);
+  create_dirs (no);
+  dns-cache-hosts (/etc/hosts);
+  keep_hostname (no);
+  time-zone ("America/Chicago");
 };
 
 # Define input source
 source s_sys {
-system();
-internal();
+  system();
+  internal();
 };
 
 source s_net {
-udp(ip(0.0.0.0) port(514));
-tcp(ip(0.0.0.0) port(514));
+  network(ip(0.0.0.0) 
+  port(514)
+  transport("tls")
+  tls(key-file("/etc/pki/tls/private/{{ syslogng_dn_prefix }}.{{syslogng_dn_suffix }}/{{ syslogng_dn_prefix }}_privkey.pem")
+  cert-file("/etc/pki/tls/certs/{{ syslogng_dn_prefix }}.{{ syslogng_dn_suffix }}/{{ syslog_dn_prefix }}_cert.pem")
+  peer-verify(optional-untrusted)));
 };
 
 # Define Destination for Local Logs
@@ -47,30 +41,30 @@ destination d_cron { file("/var/log/cron"); };
 destination d_kern { file("/var/log/kern"); };
 destination d_mlal { usertty("*"); };
 
+
 # Define Destination for Remote Log
 destination netlogpile { file(
 "/var/log/syslog-ng/$FULLHOST/$YEAR/$MONTH/$DAY/$FULLHOST-$YEAR-$MONTH-$DAY.log"
-owner(root) group(root) perm (0600)
-create_dirs ( yes ) dir_perm( 0700 ));
+  owner(root) group(root) perm (0600)
+  create_dirs ( yes ) dir_perm( 0700 ));
 };
 
-
+# Define local logging filters
 filter f_kernel { facility(kern); };
 filter f_default { level(info..emerg) and
-not (facility(mail)
-or facility(authpriv)
-or facility(cron)); };
+  not (facility(mail)
+  or facility(authpriv)
+  or facility(cron)); };
 filter f_auth { facility(authpriv); };
 filter f_mail { facility(mail); };
 filter f_emergency { level(emerg); };
 filter f_news { facility(uucp) or
-(facility(news)
-and level(crit..emerg)); };
+  (facility(news)
+  and level(crit..emerg)); };
 filter f_boot { facility(local7); };
 filter f_cron { facility(cron); };
 
 # Define local logging destination
-#log { source(s_sys); filter(f_kernel); destination(d_cons); };
 log { source(s_sys); filter(f_kernel); destination(d_kern); };
 log { source(s_sys); filter(f_default); destination(d_mesg); };
 log { source(s_sys); filter(f_auth); destination(d_auth); };
@@ -88,3 +82,4 @@ log { source(s_net); destination(netlogpile); };
 
 
 # vim:ft=syslog-ng:ai:si:ts=4:sw=4:et:
+
