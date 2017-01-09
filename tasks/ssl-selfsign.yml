@@ -9,7 +9,7 @@
   sudo: yes
   command: >
     openssl req -newkey rsa:2048 -nodes -sha256 -x509 -subj "/C=US/ST=Oklahoma/L=Norman/O=University of Oklahoma/OU=Library Technology Platforms/CN={{ syslogng_dn_prefix }}.{{ syslogng_dn_suffix }}" -days 90 -keyout "{{ syslogng_key_path }}"/{{ syslogng_dn_prefix }}."{{ syslogng_dn_suffix }}"/{{ syslogng_dn_prefix }}_privkey.pem -out "{{ syslogng_cert_path }}"/{{ syslogng_dn_prefix }}."{{ syslogng_dn_suffix }}"/{{ syslogng_dn_prefix }}_cert.pem
-  creates: "{{ syslogng_cert_path }}"/{{ syslogng_dn_prefix }}."{{ syslogng_dn_suffix }}"/{{ syslogng_dn_prefix }}_cert.pem
+  creates: "{{ syslogng_cert_path }}"/"{{ syslogng_dn_prefix }}"."{{ syslogng_dn_suffix }}"/"{{ syslogng_dn_prefix }}"_cert.pem
 
 - name: Create a dummy chain file
   sudo: yes
