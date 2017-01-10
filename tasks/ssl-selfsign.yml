@@ -14,3 +14,26 @@
   sudo: yes
   shell: >
     echo \# > "{{ syslogng_cert_path }}/{{ syslogng_dn_prefix }}.{{ syslogng_dn_suffix }}/{{ syslogng_dn_prefix }}_chain.pem"
+
+
+- name: Ensure Syslogng Client ssl cert directory exists
+  file: path="{{ syslogng_cert_path }}/{{ syslogng_client_prefix }}.{{ syslogng_client_suffix }}" state=directory
+  creates: "{{ syslogng_cert_path }}/{{ syslogng_dn_prefix }}.{{ syslogng_dn_suffix }}/{{ syslogng_dn_prefix }}_chain.pem"
+
+- name: Configure Syslog-ng Client Cert
+  template:
+    backup: yes
+    src: server_cert.pem.j2
+    dest: "{{ syslogng_cert_path }}/{{ syslogng_client_prefix }}.{{ syslogng_server_suffix }}/{{ syslogng_server_prefix }}_cert.pem"
+    mode: 0600
+    owner: root
+    group: wheel
+
+- name: Create hash of local certificate
+  command: >
+    openssl x509 -noout -hash -in {{ syslogng_cert_path }}/{{ syslogng_dn_prefix }}.{{ syslogng_dn_suffix }}/{{ syslogng_dn_prefix }}_cert.pem
+  register: hash_output
+
+- name: Create symbolic link to certificate
+  command: >
+     ln -s "{{ syslogng_cert_path }}/{{ syslogng_dn_prefix }}.{{ syslogng_dn_suffix }}/{{ syslogng_dn_prefix }}_cert.pem" "{{ syslogng_cert_path }}/{{ syslogng_dn_prefix }}.{{ syslogng_dn_suffix }}/{{hash_output.stdout }}.0"
