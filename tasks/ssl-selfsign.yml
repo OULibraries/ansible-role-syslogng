@@ -15,10 +15,10 @@
   sudo: yes
   shell: >
     echo \# > "{{ syslogng_cert_path }}/{{ syslogng_dn_prefix }}.{{ syslogng_dn_suffix }}/{{ syslogng_dn_prefix }}_chain.pem"
+    creates: "{{ syslogng_cert_path }}/{{ syslogng_dn_prefix }}.{{ syslogng_dn_suffix }}/{{syslogng_dn_prefix }}_chain.pem"
 
 - name: Ensure Syslogng Client ssl cert directory exists
   file: path="{{ syslogng_cert_path }}/{{ syslogng_client_prefix }}.{{ syslogng_client_suffix }}" state=directory
-    creates: "{{ syslogng_cert_path }}/{{ syslogng_dn_prefix }}.{{ syslogng_dn_suffix }}/{{ syslogng_dn_prefix }}_chain.pem"
 
 - name: Configure Syslog-ng Client Cert
   template:
