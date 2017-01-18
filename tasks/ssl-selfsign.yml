@@ -50,3 +50,5 @@
 - name: Create symbolic link to client certificate
   command: >
     ln -s "{{ syslogng_cert_path }}/{{ syslogng_client_prefix }}.{{ syslogng_client_suffix }}/{{ syslogng_client_prefix }}_cert.pem" "{{ syslogng_cert_path }}/{{ syslogng_client_prefix }}.{{ syslogng_client_suffix }}/{{hash_output.stdout }}.0"
+  args:
+    creates:  "{{ syslogng_cert_path }}/{{ syslogng_client_prefix }}.{{ syslogng_client_suffix }}/{{hash_output.stdout }}.0"
