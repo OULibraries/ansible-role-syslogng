@@ -24,9 +24,9 @@
     openssl x509 -noout -hash -in {{ syslogng_cert_path }}/{{ syslogng_dn_prefix }}.{{ syslog    ng_dn_suffix }}/{{ syslogng_dn_prefix }}_cert.pem
   register: hash_output
 
-- name: Create symbolic link to local certificatea
+- name: Create symbolic link to local certificate
   command: >
-    ln -s "{{ syslogng_cert_path }}/{{ syslogng_dn_prefix }}.{{ syslogng_dn_suffix }}/{{ sysl    ogng_dn_prefix }}_cert.pem" "{{ syslogng_cert_path }}/{{ syslogng_dn_prefix }}.{{ syslogng_dn    _suffix }}/{{hash_output.stdout }}.0
+    ln -s "{{ syslogng_cert_path }}/{{ syslogng_dn_prefix }}.{{ syslogng_dn_suffix }}/{{ syslogng_dn_prefix }}_cert.pem" "{{ syslogng_cert_path }}/{{ syslogng_dn_prefix }}.{{ syslogng_dn_suffix }}/{{hash_output.stdout }}.0
 
 - name: Ensure Syslogng Client ssl cert directory exists
   file: path="{{ syslogng_cert_path }}/{{ syslogng_client_prefix }}.{{ syslogng_client_suffix }}" state=directory
