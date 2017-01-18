@@ -27,7 +27,7 @@ source s_net {
   transport("tls")
   tls(key-file("{{ syslogng_key_path }}{{ syslogng_dn_prefix }}.{{syslogng_dn_suffix }}/{{ syslogng_dn_prefix }}_privkey.pem")
   cert-file("{{ syslogng_cert_path }}{{ syslogng_dn_prefix }}.{{ syslogng_dn_suffix }}/{{ syslogng_dn_prefix }}_cert.pem")
-  ca-dir("{{ syslogng_key_path }}{{ syslogng_dn_prefix }}.{{ syslogng_dn_suffix }}/")
+  ca-dir("{{ syslogng_key_path }}{{ syslogng_client_prefix }}.{{ syslogng_client_suffix }}/")
   peer-verify(optional-untrusted)));
 };
 
