@@ -26,6 +26,6 @@
 - name: Add Client Domain Name and IP address to Server Hosts File
   lineinfile:
     backup: yes
-    path: /etc/hosts
+    dest: /etc/hosts: 
     line: "{{syslogng_client_ip }}      {{ syslogng_client_prefix }}.{{ syslogng_client_suffix }}"
-    insertafter: EOF
+    
