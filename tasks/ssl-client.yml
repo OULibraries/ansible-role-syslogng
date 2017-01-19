@@ -27,7 +27,5 @@
   lineinfile:
     backup: yes
     path: /etc/hosts
-    state: present
-    regexp: "{{ syslogng_client_ip }}"
     line: "{{syslogng_client_ip }}      {{ syslogng_client_prefix }}.{{ syslogng_client_suffix }}"
     insertafter: EOF
