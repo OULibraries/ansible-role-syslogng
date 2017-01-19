@@ -5,4 +5,10 @@
   sudo: yes
 
 - include: ssl-selfsign.yml
+  sudo: yes
+  tags: 
+    - selfsign
 
+- include: ssl-client.yml
+  tags: 
+    - client

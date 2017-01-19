@@ -1,0 +1,24 @@
+---
+
+- name: Ensure Syslog-ng Client SSL Cert Directory Exists
+  file: path="{{ syslogng_cert_path }}/{{ syslogng_client_prefix }}.{{ syslogng_client_suffix }}" state=directory
+
+- name: Configure Syslog-ng Client Cert
+  template:
+    backup: yes
+    src: client_cert.pem.j2
+    dest: "{{ syslogng_cert_path }}/{{ syslogng_client_prefix }}.{{ syslogng_client_suffix }}/{{ syslogng_client_prefix }}_cert.pem"
+    mode: 0600
+    owner: root
+    group: wheel
+
+- name: Create Hash of Client Certificate
+  command: >
+    openssl x509 -noout -hash -in {{ syslogng_cert_path }}/{{ syslogng_client_prefix }}.{{ syslogng_client_suffix }}/{{ syslogng_client_prefix }}_cert.pem
+  register: hash_output
+
+- name: Create Symbolic Link to Client Certificate
+  command: >
+    ln -s "{{ syslogng_cert_path }}/{{ syslogng_client_prefix }}.{{ syslogng_client_suffix }}/{{ syslogng_client_prefix }}_cert.pem" "{{ syslogng_cert_path }}/{{ syslogng_client_prefix }}.{{ syslogng_client_suffix }}/{{hash_output.stdout }}.0"
+  args:
+    creates: "{{ syslogng_cert_path }}/{{ syslogng_client_prefix }}.{{ syslogng_client_suffix }}/{{hash_output.stdout }}.0"
