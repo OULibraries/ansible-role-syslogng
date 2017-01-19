@@ -1,38 +1,64 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+Syslog-NG role with two way encrypted communication using certificates for OULib.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+A target system running CentOS7x.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+There are two sets of variables needed for the myvars.yml file. 1 set for the server and 1 set for the client.
+
+Server Variables:
+
+	syslogng_dn_prefix: syslogng
+	syslogng_dn_suffix: vagrant.localdomain
+	syslogng_server_protocol: tls
+	syslogng_server_port: 514
+
+Client Variables:
+
+	syslogng_client_prefix: syslogclient
+	syslogng_client_suffix: vagrant.localdomain
+	syslogng_client_cert: |
+	  -----BEGIN CERTIFICATE-----
+	  <paste client cert here>
+	  -----END CERTIFICATE-----
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+* [OU Libraries Centos7 Role](https://github.com/OULibraries/ansible-role-centos7)
+* [OU Libraries Users Role](https://github.com/OULibraries/ansible-role-users)
+
+This role configures the sever for syslog destination. The companion role is the Syslog-NG Client Role, which is used to configure each client on the network. The server role can be executed with the relevant client information for each client. Tags have been assigned for the server SSL configuration and the client SSL configuration.
+
+* [OU Libraries Syslog-NG Client Role](https://github.com/OULibraries/ansible-role-syslogng-client)
+
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+Initial deployment of the server role can be run without the necessary client information using the "client" tag. 
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+	ansible-playbook <playbook name> --skip-tags "client"
+
+After the server and client have both been deployed, rerunning of the server playbook with the "client" tag will insert the necessary information in the server config to allow two way encrypted communication
+
+	ansible-playbook <playbook name> --tags "client"
+
+Make sure to change the client variables in the my-vars.yml file for each client on the network. 
 
 License
 -------
 
-BSD
+TBD
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Chris Cone @ OU Libraries
