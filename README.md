@@ -15,6 +15,7 @@ There are two sets of variables needed for the myvars.yml file. 1 set for the se
 
 Server Variables:
 
+	syslogng_server_ip: 10.255.255.10
 	syslogng_dn_prefix: syslogng
 	syslogng_dn_suffix: vagrant.localdomain
 	syslogng_server_protocol: tls
@@ -22,6 +23,7 @@ Server Variables:
 
 Client Variables:
 
+	syslogng_client_ip: 10.255.255.11
 	syslogng_client_prefix: syslogclient
 	syslogng_client_suffix: vagrant.localdomain
 	syslogng_client_cert: |
