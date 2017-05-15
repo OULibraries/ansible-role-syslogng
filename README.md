@@ -11,7 +11,7 @@ A target system running CentOS7x.
 Role Variables
 --------------
 
-There are two sets of variables needed for the myvars.yml file. 1 set for the server and 1 set for the client.
+There are two sets of variables needed for the myvars.yml file. One set for the server and one set for the client.
 
 Server Variables:
 
