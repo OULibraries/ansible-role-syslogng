@@ -11,7 +11,8 @@ options {
   use_fqdn (yes);
   create_dirs (no);
   dns-cache-hosts (/etc/hosts);
-  keep_hostname (no);
+  keep_hostname (yes);
+  keep_timestamp (yes);
   time-zone ("America/Chicago");
 };
 
@@ -21,14 +22,32 @@ source s_sys {
   internal();
 };
 
+source s_tail {
+  file("/var/log/messages" follow-freq(1) flags(no-multi-line));
+  file("/var/log/secure" follow-freq(1) flags(no-multi-line));
+};
+
 source s_net {
-  network(ip(0.0.0.0) 
-  port(514)
-  transport("tls")
-  tls(key-file("{{ syslogng_key_path }}/{{ syslogng_dn_prefix }}.{{syslogng_dn_suffix }}/{{ syslogng_dn_prefix }}_privkey.pem")
-  cert-file("{{ syslogng_cert_path }}/{{ syslogng_dn_prefix }}.{{ syslogng_dn_suffix }}/{{ syslogng_dn_prefix }}_cert.pem")
-  ca-dir("{{ syslogng_key_path }}/{{ syslogng_dn_prefix }}.{{ syslogng_dn_suffix }}/")
-  peer-verify(optional-untrusted)));
+  network(
+    port(514)
+    flags(syslog-protocol, no-multi-line)
+    transport("tls")
+    tls(
+      key-file("{{ syslogng_key_path }}/{{ syslogng_dn_prefix }}.{{syslogng_dn_suffix }}/{{ syslogng_dn_prefix }}_privkey.pem")
+      cert-file("{{ syslogng_cert_path }}/{{ syslogng_dn_prefix }}.{{ syslogng_dn_suffix }}/{{ syslogng_dn_prefix }}_cert.pem")
+      ca-dir("{{ syslogng_key_path }}/{{ syslogng_dn_prefix }}.{{ syslogng_dn_suffix }}/")
+      peer-verify(optional-untrusted)
+      )
+  );
+};
+
+source s_udp {
+  network(
+    port(514)
+    transport("udp")
+    flags(syslog-protocol, no-multi-line)
+    keep-hostname (no)
+  );
 };
 
 # Define Destination for Local Logs
@@ -44,10 +63,16 @@ destination d_mlal { usertty("*"); };
 
 
 # Define Destination for Remote Log
-destination netlogpile { file(
-"/var/log/syslog-ng/$FULLHOST/$YEAR/$MONTH/$DAY/$FULLHOST-$YEAR-$MONTH-$DAY.log"
-  owner(root) group(root) perm (0600)
-  create_dirs ( yes ) dir_perm( 0700 ));
+destination netlogpile { 
+  file(
+  "/var/log/syslog-ng/$FULLHOST/$YEAR/$MONTH/$DAY/$FULLHOST-$YEAR-$MONTH-$DAY.log"
+  owner(root) 
+  group(root) 
+  perm (0600)
+  create_dirs ( yes ) 
+  dir_perm( 0700 )
+  template("${ISODATE} ${PROGRAM} ${HOST} ${MESSAGE}\n")
+  );
 };
 
 # Define local logging filters
@@ -76,7 +101,10 @@ log { source(s_sys); filter(f_boot); destination(d_boot); };
 log { source(s_sys); filter(f_cron); destination(d_cron); };
 
 # Define network logging destination
+log { source(s_sys); destination(netlogpile); };
 log { source(s_net); destination(netlogpile); };
+log { source(s_udp); destination(netlogpile); };
+log { source(s_tail); destination(netlogpile); };
 
 # Source additional configuration files (.conf extension only)
 @include "/etc/syslog-ng/conf.d/*.conf"
