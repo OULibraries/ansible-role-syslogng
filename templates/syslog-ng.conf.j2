@@ -30,6 +30,7 @@ source s_tail {
 source s_net {
   network(
     port(514)
+    max-connections(100)
     flags(syslog-protocol, no-multi-line)
     transport("tls")
     tls(
